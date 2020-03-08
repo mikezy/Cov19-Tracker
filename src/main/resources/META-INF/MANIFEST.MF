@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: io.mikezy.cov19tracker.Cov19TrackerApplication
+
