@@ -21,8 +21,20 @@ import java.util.List;
 public class Cov19DataService {
 
     private static String VIRUS_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv";
+    private static String RECOVERED_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv";
+    private static String DEATH_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv";
 
     private List<LocationStats> allStats = new ArrayList<>();
+    private int allRecovered = 0;
+    private int allDeath = 0;
+
+    public int getAllRecovered() {
+        return allRecovered;
+    }
+
+    public int getAllDeath() {
+        return allDeath;
+    }
 
     public List<LocationStats> getAllStats() {
         return allStats;
@@ -69,5 +81,57 @@ public class Cov19DataService {
             }
         }
         this.allStats = newStats;
+
+        //get recovered and death data
+        allRecovered = 0;
+        allDeath = 0;
+        allRecovered = fetchRecoveredData();
+        allDeath = fetchDeathData();
+    }
+
+    private int fetchDeathData() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(DEATH_DATA_URL))
+                .build();
+        HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
+        //parse the information from JHU git
+        StringReader csvBodyReader = new StringReader(httpResponse.body());
+
+        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(csvBodyReader);
+
+        for (CSVRecord record : records) {
+            String country = record.get("Country/Region");
+            String state = record.get("Province/State");
+            int recovered = Integer.parseInt(record.get(record.size() - 1));
+
+            if (country.equals("US")) {
+                allDeath += Integer.parseInt(record.get(record.size() - 1));
+            }
+        }
+
+        return allDeath;
+
+    }
+
+    private int fetchRecoveredData() throws IOException, InterruptedException{
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(RECOVERED_DATA_URL))
+                .build();
+        HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
+        //parse the information from JHU git
+        StringReader csvBodyReader = new StringReader(httpResponse.body());
+
+        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(csvBodyReader);
+
+        for (CSVRecord record : records) {
+            String country = record.get(1);
+            if (country.equals("US")) {
+                allRecovered += Integer.parseInt(record.get(record.size() - 1));
+            }
+        }
+        return allRecovered;
     }
 }

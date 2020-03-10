@@ -26,6 +26,8 @@ public class HomeController {
         model.addAttribute("totalReportedCases", totalReportedCases);
         model.addAttribute("totalNewCases", totalNewCases);
         model.addAttribute("curDate", cov19DataService.getAllStats());
+        model.addAttribute("totalRecovered", cov19DataService.getAllRecovered());
+        model.addAttribute("totalDeath", cov19DataService.getAllDeath());
         return "home";
     }
 }

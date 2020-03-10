@@ -1,0 +1,28 @@
+.card{
+    text-align: center;
+    background-color: beige;
+}
+
+.card-text {
+    font-size: 4rem;
+}
+
+#totalNewCases {
+    color: #f23a3b;
+    background-color: #fff0f1;
+}
+
+#totalCases {
+    color: #f23a3b;
+    background-color: #fff0f1;
+}
+
+#totalDeath {
+    color: #4e5a65;
+    background-color: #f2f6f7;
+}
+
+#totalRecovered {
+    color: #178b50;
+    background-color: #f0f8f4;
+}
