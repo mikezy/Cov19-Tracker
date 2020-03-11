@@ -2,10 +2,14 @@ package io.mikezy.cov19tracker.services;
 
 import io.mikezy.cov19tracker.models.LocationStats;
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.jsoup.Jsoup;
+import org.jsoup.helper.Validate;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -40,6 +44,16 @@ public class Cov19DataService {
         return allStats;
     }
 
+    public void setStateDeath(String state, int latestTotalDeath) {
+        if (allStats == null) return;
+
+        for (LocationStats row : allStats) {
+            if (row.getState().equals(state)) {
+                row.setLatestTotalDeath(latestTotalDeath);
+            }
+        }
+    }
+
     @PostConstruct
     @Scheduled(cron = "0 0/30 * * * ?")
     public void fetchVirusData() throws IOException, InterruptedException {
@@ -67,9 +81,20 @@ public class Cov19DataService {
                 locationStats.setState(record.get(0));
                 locationStats.setLat(Float.parseFloat(record.get(2)));
                 locationStats.setLat(Float.parseFloat(record.get(3)));
+                int latestCases = 0;
+                if (record.get(record.size() - 1).equalsIgnoreCase("")) {
+                    continue;
+                } else {
+                    latestCases = Integer.parseInt(record.get(record.size() - 1));
+                }
 
-                int latestCases = Integer.parseInt(record.get(record.size() - 1));
-                int prevDayCases = Integer.parseInt(record.get(record.size() - 2));
+                int prevDayCases = 0;
+                if (record.get(record.size() - 2).equalsIgnoreCase("")) {
+                    continue;
+                } else {
+                    prevDayCases = Integer.parseInt(record.get(record.size() - 2));
+                }
+
                 locationStats.setLatestTotalCases(latestCases);
                 locationStats.setDiffFromPrevDay(latestCases - prevDayCases);
                 locationStats.setCurDate(curDate);
@@ -87,6 +112,7 @@ public class Cov19DataService {
         allDeath = 0;
         allRecovered = fetchRecoveredData();
         allDeath = fetchDeathData();
+
     }
 
     private int fetchDeathData() throws IOException, InterruptedException {
@@ -103,10 +129,19 @@ public class Cov19DataService {
         for (CSVRecord record : records) {
             String country = record.get("Country/Region");
             String state = record.get("Province/State");
-            int recovered = Integer.parseInt(record.get(record.size() - 1));
 
             if (country.equals("US")) {
-                allDeath += Integer.parseInt(record.get(record.size() - 1));
+                int latestTotalDeath = 0;
+                if (record.get(record.size() - 1).equalsIgnoreCase("")) {
+                    continue;
+                } else {
+                    latestTotalDeath = Integer.parseInt(record.get(record.size() - 1));
+                    allDeath += latestTotalDeath;
+                }
+
+
+                setStateDeath(state, latestTotalDeath);
+//                System.out.print(state + " State :" + latestTotalDeath);
             }
         }
 
@@ -129,9 +164,57 @@ public class Cov19DataService {
         for (CSVRecord record : records) {
             String country = record.get(1);
             if (country.equals("US")) {
-                allRecovered += Integer.parseInt(record.get(record.size() - 1));
+                int latestTotalRecovered = 0;
+                if (record.get(record.size() - 1).equalsIgnoreCase("")) {
+                    continue;
+                } else {
+                    latestTotalRecovered = Integer.parseInt(record.get(record.size() - 1));
+                    allRecovered += latestTotalRecovered;
+                }
+
             }
         }
         return allRecovered;
     }
+
+//    private void webCrawl1() throws IOException{
+//        String url = "https://coronavirus.1point3acres.com/";
+//        System.out.println("Fetching %s..." + url);
+//
+//        Document doc = Jsoup.connect(url).get();
+//
+//        Elements dataTable = doc.select("div.jsx-3737386991 span");
+//        int i = 1;
+//        for (Element row: dataTable) {
+//
+//            if (i > 4) {
+////                System.out.println("..." + row.text() + "...");
+//                switch (i%4) {
+//                    case 1:
+//                        System.out.println("State:" + row.select("span:nth-child(1)").text());
+//                        break;
+//                    case 2:
+//                        System.out.println("Confirmed:" + row.select("span:nth-child(2)").text());
+//                        break;
+//                    case 3:
+//                        System.out.println("New:" + row.select("span:nth-child(3)").text());
+//                        break;
+//                    case 0:
+//                        System.out.println("Death:" + row.select("span:nth-child(4)").text());
+//                        break;
+//                }
+//
+//
+//            }
+//            i++;
+////            System.out.println("Confirmed:" + row.select("div > span:nth-child(2)").text());
+////            System.out.println("New:" + row.select("div > span:nth-child(3)").text());
+////            System.out.println("Death:" + row.select("div > span:nth-child(4)").text());
+//
+//        }
+//    }
+
+
 }
+
+

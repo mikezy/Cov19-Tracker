@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css" >
     <link rel="stylesheet" type="text/css" href="../static/app.css" th:href="@{/app.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
 
 
 
@@ -19,17 +20,18 @@
 
     <div class="row">
         <div class="col-lg-3 col-sm-6">
-            <div class="card" id="totalNewCases">
-                <div class="card-body">
-                    <h5 class="card-title">New Cases Reported</h5>
-                    <p class="card-text" th:text="${#numbers.formatInteger(totalNewCases, 2, 'DEFAULT')}"></p>
+            <div class="card" >
+                <div class="card-body" id="totalNewCases">
+                    <h5 class="card-title">New Cases</h5>
+<!--                    <p id="totalNewCases" class="card-text" th:text="${#numbers.formatInteger(totalNewCases, 2, 'DEFAULT')}"></p>-->
+                        <p id="NewCases" class="card-text"></p>
                 </div>
             </div>
         </div>
         <div class="col-lg-3 col-sm-6">
             <div class="card" id="totalCases">
                 <div class="card-body">
-                    <h5 class="card-title">Total Cases Reported</h5>
+                    <h5 class="card-title">Total Cases</h5>
                     <p class="card-text" th:text="${#numbers.formatInteger(totalReportedCases, 3, 'DEFAULT')}"></p>
                 </div>
             </div>
@@ -51,7 +53,8 @@
             </div>
         </div>
     </div>
-
+<!--chart here-->
+    <canvas id="myChart"></canvas>
 <table id="myTable" class="table table-light table-hover table-striped"
        data-sortable="true" data-toggle="table"
        data-sort-priority='[{"sortName": "totalCasesReported","sortOrder":"desc"},{"sortName":"changeFromPrevDay","sortOrder":"desc"}]'>
@@ -59,8 +62,9 @@
         <tr>
             <th data-field="state" data-sortable="true">State</th>
             <th data-field="country">Country</th>
-            <th data-field="totalCasesReported" data-sortable="true">Total Cases Reported</th>
-            <th data-field="changeFromPrevDay" data-sortable="true">Changes from Prev Day</th>
+            <th data-field="totalCasesReported" data-sortable="true">Total Cases</th>
+<!--            <th data-field="changeFromPrevDay" data-sortable="true">Changes from Prev Day</th>-->
+            <th data-field="totalDeath" data-sortable="true">Total Death</th>
             <th>Updated Date</th>
         </tr>
     </thead>
@@ -70,7 +74,8 @@
             <td th:text="${locationStat.state}"></td>
             <td th:text="${locationStat.country}"></td>
             <td th:text="${locationStat.latestTotalCases}">0</td>
-            <td th:text="${locationStat.diffFromPrevDay}">0</td>
+<!--            <td th:text="${locationStat.diffFromPrevDay}">0</td>-->
+            <td th:text="${locationStat.latestTotalDeath}"></td>
             <td th:text="${locationStat.curDate}"></td>
         </tr>
     </tbody>
@@ -87,7 +92,7 @@
 
 
 
-<!--<script type="text/javascript" th:src="@{/main.js}"></script>-->
+<script type="text/javascript" th:src="@{/chart.js}"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>

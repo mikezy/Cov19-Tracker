@@ -9,6 +9,15 @@ public class LocationStats {
     private float lon;
     private int diffFromPrevDay;
     private String curDate;
+    private int latestTotalDeath;
+
+    public int getLatestTotalDeath() {
+        return latestTotalDeath;
+    }
+
+    public void setLatestTotalDeath(int latestTotalDeath) {
+        this.latestTotalDeath = latestTotalDeath;
+    }
 
     public String getCurDate() {
         return curDate;
