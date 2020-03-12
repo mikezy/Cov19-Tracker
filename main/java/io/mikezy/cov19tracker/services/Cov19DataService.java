@@ -77,8 +77,9 @@ public class Cov19DataService {
             }
             else {
                 String country = record.get(1);
+                String state = record.get(0);
                 locationStats.setCountry(country);
-                locationStats.setState(record.get(0));
+                locationStats.setState(state);
                 locationStats.setLat(Float.parseFloat(record.get(2)));
                 locationStats.setLat(Float.parseFloat(record.get(3)));
                 int latestCases = 0;
@@ -100,7 +101,7 @@ public class Cov19DataService {
                 locationStats.setCurDate(curDate);
 
                 //filter out US only
-                if (country.equals("US")) {
+                if (country.equals("US") && !state.contains(",")) {
                     newStats.add(locationStats);
                 }
             }
