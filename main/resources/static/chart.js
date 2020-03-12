@@ -3,7 +3,7 @@ window.addEventListener('load', setup);
 async function setup() {
     const ctx = document.getElementById('myChart').getContext('2d');
     const dataTemps = await getData();
-    document.getElementById('NewCases').innerText = dataTemps.newCases[dataTemps.newCases.length - 1];
+
     const myChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -46,7 +46,7 @@ async function getData() {
     const newCases = [];
     const rows = data.split('\n').slice(1);
     const headers = data.split('\n')[0];
-    console.log(headers);
+    // console.log(headers);
     // dates.push(header.split(',').slice(4, header.length - 1));
     for (let i = 4; i < headers.length; i++) {
         const cols = headers.split(',');
@@ -55,12 +55,12 @@ async function getData() {
     console.log(dates);
     rows.forEach(row => {
         const cols = row.split(',');
-        if (cols[2] !== "US") {
-        } else {
+
+        if (cols[2] === "US") {
             county.push(cols[0].substring(1,));
             state.push(cols[1].substring(1, 3));
             country.push(cols[2]);
-            for (let i = 5; i < cols.length; i++) {
+            for (let i = 5; i < 53; i++) { //county level cases up to 3/10
                 if (cols[i] === "") {
                     continue;
                 } else if (totalCases[i - 5] == null) {
@@ -68,11 +68,11 @@ async function getData() {
                 } else {
                     totalCases[i - 5] += parseInt(cols[i]);
                 }
-                // console.log(i + " case: " + cols[i]);
+                // console.log(totalCases[i-5]);
             }
         }
 
-        if (cols[1] === "US") { //ships
+        if (cols[1] === "US") { //ships and states only data after 3/10
             for (let i = 4; i < cols.length; i++) {
                 if (cols[i] === "") {
                     continue;
@@ -93,8 +93,8 @@ async function getData() {
         }
 
     }
-    console.log(totalCases);
-    console.log(newCases);
+    // console.log(totalCases);
+    // console.log(newCases);
     return {
         dates,
         county,
