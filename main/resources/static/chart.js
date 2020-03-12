@@ -3,7 +3,8 @@ window.addEventListener('load', setup);
 async function setup() {
     const ctx = document.getElementById('myChart').getContext('2d');
     const dataTemps = await getData();
-
+    document.getElementById("NewCases").innerText = dataTemps.newCases[dataTemps.newCases.length-1];
+    document.getElementById("ttlCases").innerText = dataTemps.totalCases[dataTemps.totalCases.length-1];
     const myChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -52,7 +53,7 @@ async function getData() {
         const cols = headers.split(',');
         if (cols[i] !== undefined) dates.push(cols[i]);
     }
-    console.log(dates);
+    // console.log(dates);
     rows.forEach(row => {
         const cols = row.split(',');
 

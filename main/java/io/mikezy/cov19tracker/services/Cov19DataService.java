@@ -130,7 +130,7 @@ public class Cov19DataService {
             String country = record.get("Country/Region");
             String state = record.get("Province/State");
 
-            if (country.equals("US")) {
+            if (country.equals("US") && !state.contains(",")) { //ignore the county level numbers
                 int latestTotalDeath = 0;
                 if (record.get(record.size() - 1).equalsIgnoreCase("")) {
                     continue;
@@ -162,8 +162,9 @@ public class Cov19DataService {
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(csvBodyReader);
 
         for (CSVRecord record : records) {
-            String country = record.get(1);
-            if (country.equals("US")) {
+            String country = record.get("Country/Region");
+            String state = record.get("Province/State");
+            if (country.equals("US") && !state.contains(",")) {
                 int latestTotalRecovered = 0;
                 if (record.get(record.size() - 1).equalsIgnoreCase("")) {
                     continue;
