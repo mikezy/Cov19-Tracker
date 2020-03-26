@@ -24,9 +24,9 @@ import java.util.List;
 @Service
 public class Cov19DataService {
 
-    private static String VIRUS_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv";
-    private static String RECOVERED_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv";
-    private static String DEATH_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv";
+    private static String VIRUS_DATA_URL = "https://www.soothsawyer.com/wp-content/uploads/2020/03/time_series_19-covid-Confirmed.csv";
+    private static String RECOVERED_DATA_URL = "https://www.soothsawyer.com/wp-content/uploads/2020/03/time_series_19-covid-Recovered.csv";
+    private static String DEATH_DATA_URL = "https://www.soothsawyer.com/wp-content/uploads/2020/03/time_series_19-covid-Deaths.csv";
 
     private List<LocationStats> allStats = new ArrayList<>();
     private int allRecovered = 0;
@@ -80,8 +80,8 @@ public class Cov19DataService {
                 String state = record.get(0);
                 locationStats.setCountry(country);
                 locationStats.setState(state);
-                locationStats.setLat(Float.parseFloat(record.get(2)));
-                locationStats.setLat(Float.parseFloat(record.get(3)));
+//                locationStats.setLat(Float.parseFloat(record.get(2)));
+//                locationStats.setLat(Float.parseFloat(record.get(3)));
                 int latestCases = 0;
                 if (record.get(record.size() - 1).equalsIgnoreCase("")) {
                     continue;
@@ -128,8 +128,8 @@ public class Cov19DataService {
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(csvBodyReader);
 
         for (CSVRecord record : records) {
-            String country = record.get("Country/Region");
-            String state = record.get("Province/State");
+            String country = record.get(1);
+            String state = record.get(0);
 
             if (country.equals("US") && !state.contains(",")) { //ignore the county level numbers
                 int latestTotalDeath = 0;
@@ -163,8 +163,8 @@ public class Cov19DataService {
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(csvBodyReader);
 
         for (CSVRecord record : records) {
-            String country = record.get("Country/Region");
-            String state = record.get("Province/State");
+            String country = record.get(1);
+            String state = record.get(0);
             if (country.equals("US") && !state.contains(",")) {
                 int latestTotalRecovered = 0;
                 if (record.get(record.size() - 1).equalsIgnoreCase("")) {

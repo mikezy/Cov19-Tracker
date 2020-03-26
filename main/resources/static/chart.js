@@ -36,7 +36,7 @@ async function setup() {
 async function getData() {
     // const response = await fetch('https://raw.githubusercontent.com/CodingTrain/Intro-to-Data-APIs-JS/source/module1/02_fetch_csv_exercise_multiple/testdata.csv');
     const response = await fetch(
-        'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv'
+        'https://www.soothsawyer.com/wp-content/uploads/2020/03/time_series_19-covid-Confirmed.csv'
     );
     const data = await response.text();
     const dates = [];
@@ -53,7 +53,7 @@ async function getData() {
         const cols = headers.split(',');
         if (cols[i] !== undefined) dates.push(cols[i]);
     }
-    // console.log(dates);
+    console.log(dates);
     rows.forEach(row => {
         const cols = row.split(',');
 
