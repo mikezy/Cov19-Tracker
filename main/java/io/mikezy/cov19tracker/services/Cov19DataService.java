@@ -24,9 +24,9 @@ import java.util.List;
 @Service
 public class Cov19DataService {
 
-    private static String VIRUS_DATA_URL = "https://www.soothsawyer.com/wp-content/uploads/2020/03/time_series_19-covid-Confirmed.csv";
-    private static String RECOVERED_DATA_URL = "https://www.soothsawyer.com/wp-content/uploads/2020/03/time_series_19-covid-Recovered.csv";
-    private static String DEATH_DATA_URL = "https://www.soothsawyer.com/wp-content/uploads/2020/03/time_series_19-covid-Deaths.csv";
+    private static String VIRUS_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv";
+    //private static String RECOVERED_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_us.csv";
+    private static String DEATH_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv";
 
     private List<LocationStats> allStats = new ArrayList<>();
     private int allRecovered = 0;
@@ -77,7 +77,7 @@ public class Cov19DataService {
             }
             else {
                 String country = record.get(1);
-                String state = record.get(0);
+                String state = record.get(5) + ", "+ record.get(6);
                 locationStats.setCountry(country);
                 locationStats.setState(state);
 //                locationStats.setLat(Float.parseFloat(record.get(2)));
@@ -101,7 +101,8 @@ public class Cov19DataService {
                 locationStats.setCurDate(curDate);
 
                 //filter out US only
-                if (country.equals("US") && !state.contains(",")) {
+//                if (country.equals("US") && !state.contains(",")) {
+                if (country.equals("US")) {
                     newStats.add(locationStats);
                 }
             }
@@ -111,7 +112,7 @@ public class Cov19DataService {
         //get recovered and death data
         allRecovered = 0;
         allDeath = 0;
-        allRecovered = fetchRecoveredData();
+//        allRecovered = fetchRecoveredData();
         allDeath = fetchDeathData();
 
     }
@@ -129,9 +130,10 @@ public class Cov19DataService {
 
         for (CSVRecord record : records) {
             String country = record.get(1);
-            String state = record.get(0);
+            String state = record.get(5) + ", "+ record.get(6);
 
-            if (country.equals("US") && !state.contains(",")) { //ignore the county level numbers
+//            if (country.equals("US") && !state.contains(",")) { //ignore the county level numbers
+            if (country.equals("US")) {
                 int latestTotalDeath = 0;
                 if (record.get(record.size() - 1).equalsIgnoreCase("")) {
                     continue;
@@ -149,35 +151,35 @@ public class Cov19DataService {
         return allDeath;
 
     }
-
-    private int fetchRecoveredData() throws IOException, InterruptedException{
-
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(RECOVERED_DATA_URL))
-                .build();
-        HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
-        //parse the information from JHU git
-        StringReader csvBodyReader = new StringReader(httpResponse.body());
-
-        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(csvBodyReader);
-
-        for (CSVRecord record : records) {
-            String country = record.get(1);
-            String state = record.get(0);
-            if (country.equals("US") && !state.contains(",")) {
-                int latestTotalRecovered = 0;
-                if (record.get(record.size() - 1).equalsIgnoreCase("")) {
-                    continue;
-                } else {
-                    latestTotalRecovered = Integer.parseInt(record.get(record.size() - 1));
-                    allRecovered += latestTotalRecovered;
-                }
-
-            }
-        }
-        return allRecovered;
-    }
+//
+//    private int fetchRecoveredData() throws IOException, InterruptedException{
+//
+//        HttpClient client = HttpClient.newHttpClient();
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create(RECOVERED_DATA_URL))
+//                .build();
+//        HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
+//        //parse the information from JHU git
+//        StringReader csvBodyReader = new StringReader(httpResponse.body());
+//
+//        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(csvBodyReader);
+//
+//        for (CSVRecord record : records) {
+//            String country = record.get(1);
+//            String state = record.get(5);
+//            if (country.equals("US") && !state.contains(",")) {
+//                int latestTotalRecovered = 0;
+//                if (record.get(record.size() - 1).equalsIgnoreCase("")) {
+//                    continue;
+//                } else {
+//                    latestTotalRecovered = Integer.parseInt(record.get(record.size() - 1));
+//                    allRecovered += latestTotalRecovered;
+//                }
+//
+//            }
+//        }
+//        return allRecovered;
+//    }
 
 //    private void webCrawl1() throws IOException{
 //        String url = "https://coronavirus.1point3acres.com/";
