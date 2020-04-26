@@ -11,6 +11,7 @@ async function setup() {
             labels: dataTemps.dates,
             datasets: [{
                 label: 'Total Cases',
+                yAxisID: 'A',
                 data: dataTemps.totalCases,
                 fill: false,
                 borderColor: 'rgba(255, 99, 132, 1)',
@@ -19,6 +20,7 @@ async function setup() {
             },
                 {
                     label: 'New Cases',
+                    yAxisID: 'B',
                     data: dataTemps.newCases,
                     fill: false,
                     borderColor: 'rgba(99, 132, 255, 1)',
@@ -28,7 +30,22 @@ async function setup() {
             ]
         },
         options: {
-            responsive: true
+            responsive: true,
+            scales: {
+                yAxes: [{
+                    id: 'A',
+                    type: 'linear',
+                    position: 'left',
+                }, {
+                    id: 'B',
+                    type: 'linear',
+                    position: 'right',
+                    ticks: {
+                        max: 50000,
+                        min: 0
+                    }
+                }]
+            }
         }
     });
 }
